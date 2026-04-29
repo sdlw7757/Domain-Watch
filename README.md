@@ -33,7 +33,7 @@ DomainGuard/
    进入你的仓库：
    Settings → Secrets and variables → Actions → New repository secret
    
-   添加下面 4 个密钥：
+   添加下面 5 个密钥：
    
    | 密钥名称 | 值 |
    |---------|-----|
