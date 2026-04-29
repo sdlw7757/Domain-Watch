@@ -64,6 +64,11 @@ DomainGuard/
 
 ✅ 全自动守护
 
+## 📄 开源协议
+
+本项目基于 [MIT License](https://opensource.org/licenses/MIT) 开源。
+
+
 ---
 
 **DomainGuard — 让你的域名永不过期**
