@@ -171,13 +171,15 @@ function formatDate(dateStr) {
   return `${y}-${m}-${day}`;
 }
 
+// 【核心修复】剩余天数计算：修正时间换算分母
 function getDaysLeft(expireStr){
   let now = new Date();
   let expire = new Date(expireStr);
   now.setHours(0,0,0,0);
   expire.setHours(0,0,0,0);
   let diff = expire - now;
-  return Math.floor(diff / (1000*60*6*24));
+  // 错误：1000*60*6*24 → 正确：1000*60*60*24
+  return Math.floor(diff / (1000 * 60 * 60 * 24));
 }
 
 // 向上移动
