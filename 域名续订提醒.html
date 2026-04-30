@@ -6,88 +6,206 @@
 <title>域名到期管理面板</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
-body{background:#f5f7fa;padding:20px;color:#333;padding-bottom:80px}
-.container{max-width:1200px;margin:0 auto}
-.header{text-align:center;margin-bottom:30px}
-.header h1{color:#2d3748;margin-bottom:10px}
+/* 禁止全局滚动，只留表格滚动条 */
+html, body{
+  height: 100%;
+  overflow: hidden;
+  background:#f5f7fa;
+  color:#333;
+}
+
+.container{width: 98%;margin:0 auto}
+
+/* 顶部固定 */
+.header{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background:#f5f7fa;
+  z-index: 999;
+  padding: 12px 20px 10px;
+  text-align: center;
+}
+.fixed-buttons{
+  position: fixed;
+  top: 110px;
+  left: 0;
+  width: 100%;
+  background:#f5f7fa;
+  z-index: 999;
+  padding: 0 20px 12px;
+}
+
+.header h1{color:#2d3748;margin-bottom:6px}
 .header p{color:#718096}
-.card{background:white;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.08);padding:20px;margin-bottom:20px}
+.card{background:white;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.08);padding:20px;}
 .btn{padding:10px 16px;border:none;border-radius:8px;cursor:pointer;font-weight:500}
 .btn-primary{background:#4263eb;color:white}
 .btn-success{background:#00b42a;color:white}
 .btn-warning{background:#ff7d00;color:white}
 .btn-danger{background:#f53f3f;color:white}
-.btn-sm{padding:6px 10px;font-size:14px}
+.btn-sm{padding:6px 10px;font:500 14px/1 sans-serif}
+
+/* 搜索条样式 */
+.search-bar{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-left: 12px;
+}
+.search-input{
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  width: 240px;
+  outline: none;
+}
+.search-input:focus{
+  border-color: #4263eb;
+}
+
 .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;margin-bottom:20px}
 .form-item label{display:block;margin-bottom:6px;font-weight:500;color:#4a5568}
 .form-item input,.form-item textarea{width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px}
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse}
-th{background:#f7fafc;padding:12px;text-align:left;color:#4a5568;font-weight:600}
-td{padding:12px;border-bottom:1px solid #f0f0f0}
+
+/* 表格容器 —— 唯一滚动条（高度缩小，给统计栏留空间） */
+.table-wrap{
+  overflow-x:auto;
+  overflow-y:auto;
+  max-height: calc(100vh - 300px); /* 关键修复：缩小表格高度 */
+}
+
+/* 表头固定 */
+.table-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #f7fafc;
+}
+
+table{width:100%;border-collapse:collapse;table-layout:fixed;}
+th{
+  background:#f7fafc;
+  padding:14px 6px;
+  text-align:center;
+  color:#4a5568;
+  font:700 15px/1.2 sans-serif;
+  white-space:nowrap;
+  border-bottom:2px solid #e2e8f0;
+}
+td{
+  padding:14px 4px;
+  height:52px;
+  border-bottom:1px solid #f0f0f0;
+  text-align:center;
+  vertical-align:middle;
+  white-space:nowrap;
+  overflow:hidden;
+  font-size:clamp(12px, 2vw, 15px);
+}
+
+/* 列宽固定 */
+th:nth-child(2),td:nth-child(2){width:10%}
+th:nth-child(3),td:nth-child(3){width:11%}
+th:nth-child(4),td:nth-child(4){width:9%}
+td:nth-child(5){width:19%;font-size:clamp(9px, 1.6vw, 14px);}
+td:nth-child(6){width:12%;font-size:clamp(10px, 1.8vw, 14px);}
+td:nth-child(7){width:17%;font-size:clamp(9px, 1.6vw, 14px);}
+th:nth-child(8),td:nth-child(8){width:8%}
+th:nth-child(9),td:nth-child(9){width:10%}
+
+/* 统计样式 —— 确保一定显示 */
+.stats-bar {
+  margin-top:12px;
+  padding:12px;
+  background:#fff;
+  border-radius:12px;
+  text-align:center;
+  font-size:15px;
+  font-weight:500;
+  color:#4a5568;
+  display:block;
+}
+.stats-bar span {
+  color:#4263eb;
+  font-weight:600;
+}
+.stats-bar .permanent {
+  color:#00b42a;
+}
+
 .warn{background:#fff2f0;color:#f53f3f;font-weight:500}
-.ok{color:#00b42a}
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);display:none;justify-content:center;align-items:center;z-index:999}
-.modal-content{background:white;width:90%;max-width:600px;border-radius:16px;padding:24px}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);display:none;justify-content:center;align-items:center;z-index:9999}
+.modal-content{background:white;width:90%;max-width:700;border-radius:16px;padding:24px}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
 .close{font-size:24px;cursor:pointer;color:#999}
-.tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:12px}
+.tag{display:inline-block;padding:5px 9px;border-radius:6px;font-size:13px;margin-left:4px;white-space:nowrap}
 .tag-red{background:#ffebee;color:#c53030}
 .tag-green{background:#f0fff4;color:#22c55e}
-.action-buttons{display:flex;gap:8px;flex-wrap:wrap}
-.move-btn{width:24px;height:24px;padding:0;display:flex;align-items:center;justify-content:center;font-size:12px}
+.tag-permanent{background:#e6f7ef;color:#00b42a;font-weight:500}
+.action-buttons{display:flex;gap:6px;justify-content:center;align-items:center}
+.move-btn{width:26px;height:26px;padding:0}
 
-/* 底部样式 */
 .footer{
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  background:#fff;
-  padding:12px 20px;
-  text-align:center;
-  font-size:12px;
-  color:#666;
-  border-top:1px solid #eee;
-  z-index:99;
-  line-height:1.5;
+  position:fixed;bottom:0;left:0;width:100%;
+  background:#fff;padding:12px 20px;text-align:center;font-size:12px;color:#666;
+  border-top:1px solid #eee;z-index:99;
 }
+.center{text-align:center}
 </style>
 </head>
 <body>
-<div class="container">
+
 <div class="header">
-<h1>🏷️ 域名到期管理面板</h1>
-<p>独立设置提醒天数 | 日期自动格式化 | 免费本地化运行</p>
+  <h1>🏷️ 域名到期管理面板</h1>
+  <p>独立设置提醒天数 | 日期自动格式化 | 本地化运行</p>
 </div>
 
-<div class="card">
-<button class="btn btn-primary" onclick="openModal()">➕ 添加域名</button>
-<button class="btn btn-success" onclick="exportData()">💾 导出备份</button>
-<button class="btn btn-warning" onclick="importData()">📂 导入备份</button>
+<div class="fixed-buttons">
+  <div class="card" style="margin-bottom:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+    <button class="btn btn-primary" onclick="openModal()">➕ 添加域名</button>
+    <button class="btn btn-success" onclick="openBatchModal()">📝 批量添加</button>
+    <button class="btn btn-warning" onclick="exportData()">💾 导出备份</button>
+    <button class="btn btn-danger" onclick="importData()">📂 导入备份</button>
+    <div class="search-bar">
+      <input type="text" class="search-input" id="searchInput" placeholder="🔍 搜索域名（模糊匹配）" oninput="doSearch()">
+    </div>
+  </div>
 </div>
 
-<div class="card">
-<div class="table-wrap">
-<table>
-<thead>
-<tr>
-<th>域名</th>
-<th>到期日期</th>
-<th>剩余天数</th>
-<th>提醒天数</th>
-<th>注册地址</th>
-<th>注册账号</th>
-<th>备注</th>
-<th>排序</th>
-<th>操作</th>
-</tr>
-</thead>
-<tbody id="domainList"></tbody>
-</table>
-</div>
+<div class="container" style="padding-top:170px; padding-bottom:80px;">
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead class="table-header">
+          <tr>
+            <th>域名</th>
+            <th>到期日期</th>
+            <th>剩余天数</th>
+            <th>提醒天数</th>
+            <th>注册地址</th>
+            <th>注册账号</th>
+            <th>备注</th>
+            <th>排序</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="domainList"></tbody>
+      </table>
+    </div>
+
+    <!-- 表格下方统计（一定显示） -->
+    <div class="stats-bar">
+      普通域名：<span id="normalCount">0</span> 个 
+      &nbsp;&nbsp;|&nbsp;&nbsp;
+      永久域名：<span id="permanentCount" class="permanent">0</span> 个
+    </div>
+  </div>
 </div>
 
+<!-- 弹窗 -->
 <div class="modal" id="modal">
 <div class="modal-content">
 <div class="modal-header">
@@ -97,30 +215,12 @@ td{padding:12px;border-bottom:1px solid #f0f0f0}
 <form id="domainForm">
 <input type="hidden" id="editIndex">
 <div class="form-grid">
-<div class="form-item">
-<label>域名</label>
-<input type="text" id="domain" required>
-</div>
-<div class="form-item">
-<label>到期日期（任意格式自动转换）</label>
-<input type="text" id="expire" placeholder="例如：20280708 / 2027-01-31 / 2027.1.31 / 2027年1月31日" required>
-</div>
-<div class="form-item">
-<label>⚠️ 该域名提醒天数</label>
-<input type="number" id="warnDays" placeholder="180" required>
-</div>
-<div class="form-item">
-<label>注册地址</label>
-<input type="text" id="regUrl">
-</div>
-<div class="form-item">
-<label>注册账号</label>
-<input type="text" id="account">
-</div>
-<div class="form-item" style="grid-column:1/-1">
-<label>备注</label>
-<textarea id="note" rows="2"></textarea>
-</div>
+<div class="form-item"><label>域名</label><input type="text" id="domain" required></div>
+<div class="form-item"><label>到期日期（不填=永久）</label><input type="text" id="expire" placeholder="20280708"></div>
+<div class="form-item"><label>提醒天数</label><input type="number" id="warnDays" value="180" required></div>
+<div class="form-item"><label>注册地址</label><input type="text" id="regUrl"></div>
+<div class="form-item"><label>注册账号</label><input type="text" id="account"></div>
+<div class="form-item" style="grid-column:1/-1"><label>备注</label><textarea id="note" rows="2"></textarea></div>
 </div>
 <div style="text-align:right;margin-top:20px">
 <button type="button" class="btn" onclick="closeModal()">取消</button>
@@ -130,226 +230,157 @@ td{padding:12px;border-bottom:1px solid #f0f0f0}
 </div>
 </div>
 
-<!-- 底部声明 -->
+<!-- 批量添加 -->
+<div class="modal" id="batchModal">
+<div class="modal-content">
+<div class="modal-header">
+<h2>批量添加域名</h2>
+<span class="close" onclick="closeBatchModal()">&times;</span>
+</div>
+<div class="form-grid">
+<div class="form-item"><label>公共到期日期</label><input type="text" id="batchExpire"></div>
+<div class="form-item"><label>公共提醒天数</label><input type="number" id="batchWarn" value="180"></div>
+<div class="form-item"><label>公共注册地址</label><input type="text" id="batchRegUrl"></div>
+<div class="form-item"><label>公共注册账号</label><input type="text" id="batchAccount"></div>
+<div class="form-item" style="grid-column:1/-1"><label>公共备注</label><textarea id="batchNote" rows="2"></textarea></div>
+</div>
+<div class="form-item">
+<label>一行一个域名</label>
+<textarea id="batchDomains" rows="8" style="width:100%;padding:10;border-radius:8px"></textarea>
+</div>
+<div style="text-align:right;margin-top:16px">
+<button class="btn" onclick="closeBatchModal()">取消</button>
+<button class="btn btn-primary" onclick="saveBatchEasy()">确认批量添加</button>
+</div>
+</div>
+</div>
+
 <div class="footer">
   <div id="time">北京时间：加载中...</div>
-  <div style="margin-top:4px;">本工具仅用于个人域名到期管理 | 数据本地存储，不上传云端</div>
-  <div>Copyright © 2026 域名管理面板 保留所有权利</div>
+  <div>本工具仅个人管理 | 数据本地存储</div>
 </div>
 
 <script>
 const STORAGE_KEY = "domain_data";
+let allData = loadData();
 
-function loadData(){
-  let data = localStorage.getItem(STORAGE_KEY);
-  return data ? JSON.parse(data) : [];
-}
+function loadData(){return JSON.parse(localStorage.getItem(STORAGE_KEY))||[]}
 function saveData(arr){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(arr));
+  allData = [...arr];
 }
 
-// 日期自动格式化：支持 20280708 / 2028-07-08 / 2028.07.08 等所有格式
-function formatDate(dateStr) {
-  if (!dateStr) return "";
-  let s = dateStr.trim().replace(/\D/g, ""); // 只保留数字
-
-  // 兼容 纯数字8位格式：20280708
-  if (s.length === 8) {
-    let y = s.slice(0,4);
-    let m = s.slice(4,6);
-    let d = s.slice(6,8);
-    return `${y}-${m}-${d}`;
-  }
-
-  // 其他格式处理
-  let cleaned = dateStr.replace(/[^0-9]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
-  let d = new Date(cleaned);
-  if (isNaN(d.getTime())) return "";
-  let y = d.getFullYear();
-  let m = (d.getMonth() + 1).toString().padStart(2, "0");
-  let day = d.getDate().toString().padStart(2, "0");
+function formatDate(s){
+  if(!s)return"";s=s.replace(/\D/g,"");
+  if(s.length===8)return s.slice(0,4)+"-"+s.slice(4,6)+"-"+s.slice(6,8);
+  let d=new Date(s.replace(/[^0-9]/g,"-"));
+  if(isNaN(d))return"";
+  let y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");
   return `${y}-${m}-${day}`;
 }
 
-// 【核心修复】剩余天数计算：修正时间换算分母
-function getDaysLeft(expireStr){
-  let now = new Date();
-  let expire = new Date(expireStr);
-  now.setHours(0,0,0,0);
-  expire.setHours(0,0,0,0);
-  let diff = expire - now;
-  // 错误：1000*60*6*24 → 正确：1000*60*60*24
-  return Math.floor(diff / (1000 * 60 * 60 * 24));
+function getDaysLeft(e){
+  if(!e)return"永久免费";
+  let now=new Date();now.setHours(0,0,0,0);
+  let ex=new Date(e);ex.setHours(0,0,0,0);
+  return Math.floor((ex-now)/(1000*60*60*24));
 }
 
-// 向上移动
-function moveUp(idx) {
-  if (idx <= 0) return;
-  let list = loadData();
-  [list[idx], list[idx - 1]] = [list[idx - 1], list[idx]];
-  saveData(list);
-  renderList();
+// 统计更新
+function updateStats(){
+  let list=allData,n=0,p=0;
+  list.forEach(i=>i.expire?n++:p++);
+  document.getElementById("normalCount").textContent=n;
+  document.getElementById("permanentCount").textContent=p;
 }
 
-// 向下移动
-function moveDown(idx) {
-  let list = loadData();
-  if (idx >= list.length - 1) return;
-  [list[idx], list[idx + 1]] = [list[idx + 1], list[idx]];
-  saveData(list);
-  renderList();
+function moveUp(i){if(i<=0)return;let l=allData;[l[i],l[i-1]]=[l[i-1],l[i]];saveData(l);renderList()}
+function moveDown(i){let l=allData;if(i>=l.length-1)return;[l[i],l[i+1]]=[l[i+1],l[i]];saveData(l);renderList()}
+
+// 模糊搜索
+function doSearch(){
+  let keyword = document.getElementById("searchInput").value.toLowerCase().trim();
+  renderList(keyword);
 }
 
-function renderList(){
-  let list = loadData();
-  let html = "";
-  list.forEach((item,idx)=>{
-    let left = getDaysLeft(item.expire);
-    let warn = parseInt(item.warnDays || 180);
-    let isWarn = left <= warn;
-    let cls = isWarn ? "warn" : "";
-    let tag = isWarn ? `<span class="tag tag-red">请续订</span>` : `<span class="tag tag-green">正常</span>`;
+// 渲染列表
+function renderList(keyword = ""){
+  let list = allData.filter(item => {
+    if(!keyword) return true;
+    return item.domain.toLowerCase().includes(keyword);
+  });
 
-    let moveButtons = `
-      <div class="action-buttons">
-        <button class="btn btn-sm move-btn ${idx <= 0 ? 'disabled' : ''}" onclick="moveUp(${idx})" ${idx <= 0 ? 'disabled style="opacity:0.5;cursor:not-allowed"' : ''}>↑</button>
-        <button class="btn btn-sm move-btn ${idx >= list.length-1 ? 'disabled' : ''}" onclick="moveDown(${idx})" ${idx >= list.length-1 ? 'disabled style="opacity:0.5;cursor:not-allowed"' : ''}>↓</button>
-      </div>
-    `;
-
-    html += `<tr class="${cls}">
+  let h="";
+  list.forEach((item,i)=>{
+    let left=getDaysLeft(item.expire),warn=+item.warnDays||180;
+    let isWarn=item.expire&&left<=warn,cls=isWarn?"warn":"";
+    let exHtml=item.expire?item.expire:'<span class="tag tag-permanent">永不到期</span>';
+    let leftHtml=!item.expire?'<span class="tag tag-permanent">永久免费</span>':
+      (isWarn?`${left}天 <span class="tag tag-red">请续订</span>`:`${left}天 <span class="tag-green">正常</span>`);
+    let warnHtml=item.expire?`${warn}天`:'<span class="center">-</span>';
+    h+=`<tr class="${cls}">
 <td>${item.domain}</td>
-<td>${item.expire}</td>
-<td>${left}天 ${tag}</td>
-<td>${warn}天</td>
+<td>${exHtml}</td>
+<td>${leftHtml}</td>
+<td>${warnHtml}</td>
 <td>${item.regUrl||"-"}</td>
 <td>${item.account||"-"}</td>
 <td>${item.note||"-"}</td>
-<td>${moveButtons}</td>
 <td>
-<div class="action-buttons">
-<button class="btn btn-sm btn-warning" onclick="editItem(${idx})">编辑</button>
-<button class="btn btn-sm btn-danger" onclick="deleteItem(${idx})">删除</button>
-</div>
+<button class="btn btn-sm move-btn" onclick="moveUp(${i})" ${i<=0?"disabled":""}>↑</button>
+<button class="btn btn-sm move-btn" onclick="moveDown(${i})" ${i>=list.length-1?"disabled":""}>↓</button>
+</td>
+<td>
+<button class="btn btn-sm btn-warning" onclick="editItem(${i})">编辑</button>
+<button class="btn btn-sm btn-danger" onclick="deleteItem(${i})">删除</button>
 </td>
 </tr>`;
   });
-  document.getElementById("domainList").innerHTML = html || "<tr><td colspan='9' style='text-align:center;padding:20px'>暂无域名，点击添加</td></tr>";
+  document.getElementById("domainList").innerHTML=h||"<tr><td colspan=9 style='text-align:center;padding:20px'>暂无域名</td></tr>";
+  updateStats();
 }
 
-function openModal(){
-  document.getElementById("modalTitle").textContent = "添加域名";
-  document.getElementById("domainForm").reset();
-  document.getElementById("editIndex").value = "";
-  document.getElementById("warnDays").value = 180;
-  document.getElementById("modal").style.display = "flex";
-}
-function closeModal(){
-  document.getElementById("modal").style.display = "none";
+function openModal(){document.getElementById("modalTitle").textContent="添加域名";document.getElementById("domainForm").reset();document.getElementById("editIndex").value="";document.getElementById("warnDays").value=180;document.getElementById("modal").style.display="flex"}
+function closeModal(){document.getElementById("modal").style.display="none"}
+function openBatchModal(){document.getElementById("batchModal").style.display="flex"}
+function closeBatchModal(){document.getElementById("batchModal").style.display="none"}
+
+function saveBatchEasy(){
+  let e=formatDate(document.getElementById("batchExpire").value);
+  let w=document.getElementById("batchWarn").value||180;
+  let r=document.getElementById("batchRegUrl").value,a=document.getElementById("batchAccount").value,n=document.getElementById("batchNote").value;
+  let d=document.getElementById("batchDomains").value.trim().split("\n").map(x=>x.trim()).filter(Boolean);
+  if(!d.length){alert("请输入域名");return}
+  let list=allData;d.forEach(x=>list.push({domain:x,expire:e,warnDays:w,regUrl:r,account:a,note:n}));
+  saveData(list);closeBatchModal();renderList();alert("批量添加成功");
 }
 
-function editItem(idx){
-  let list = loadData();
-  let item = list[idx];
-  document.getElementById("editIndex").value = idx;
-  document.getElementById("domain").value = item.domain;
-  document.getElementById("expire").value = item.expire;
-  document.getElementById("warnDays").value = item.warnDays || 180;
-  document.getElementById("regUrl").value = item.regUrl||"";
-  document.getElementById("account").value = item.account||"";
-  document.getElementById("note").value = item.note||"";
-  document.getElementById("modalTitle").textContent = "编辑域名";
-  document.getElementById("modal").style.display = "flex";
-}
+function editItem(i){let l=allData,o=l[i];document.getElementById("editIndex").value=i;document.getElementById("domain").value=o.domain;document.getElementById("expire").value=o.expire||"";document.getElementById("warnDays").value=o.warnDays||180;document.getElementById("regUrl").value=o.regUrl||"";document.getElementById("account").value=o.account||"";document.getElementById("note").value=o.note||"";document.getElementById("modalTitle").textContent="编辑域名";document.getElementById("modal").style.display="flex"}
+function deleteItem(i){if(!confirm("确定删除？"))return;let l=allData;l.splice(i,1);saveData(l);renderList()}
 
-function deleteItem(idx){
-  if(!confirm("确定删除？")) return;
-  let list = loadData();
-  list.splice(idx,1);
-  saveData(list);
-  renderList();
-}
-
-// 提交时自动格式化日期
-document.getElementById("domainForm").addEventListener("submit",(e)=>{
+document.getElementById("domainForm").onsubmit=e=>{
   e.preventDefault();
-  let idx = document.getElementById("editIndex").value;
-  let rawDate = document.getElementById("expire").value.trim();
-  let formattedDate = formatDate(rawDate);
-  
-  if (!formattedDate) {
-    alert("日期格式不正确，请重新输入！");
-    return;
-  }
-
-  let data = {
-    domain: document.getElementById("domain").value,
-    expire: formattedDate,
-    warnDays: document.getElementById("warnDays").value,
-    regUrl: document.getElementById("regUrl").value,
-    account: document.getElementById("account").value,
-    note: document.getElementById("note").value
+  let i=document.getElementById("editIndex").value;
+  let d=formatDate(document.getElementById("expire").value);
+  let o={
+    domain:document.getElementById("domain").value,
+    expire:d,
+    warnDays:document.getElementById("warnDays").value,
+    regUrl:document.getElementById("regUrl").value,
+    account:document.getElementById("account").value,
+    note:document.getElementById("note").value
   };
-  let list = loadData();
-  if(idx === "") list.push(data);
-  else list[idx] = data;
-  saveData(list);
-  closeModal();
-  renderList();
-});
+  let l=allData;i===""?l.push(o):l[i]=o;
+  saveData(l);closeModal();renderList();
+};
 
-// 导出备份
-function exportData(){
-  let data = localStorage.getItem(STORAGE_KEY);
-  let blob = new Blob([data],{type:"application/json"});
-  let url = URL.createObjectURL(blob);
-  let a = document.createElement("a");
-  a.href = url;
-  a.download = "domains.json";
-  a.click();
-}
+function exportData(){let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(allData)]));a.download="domains.json";a.click()}
+function importData(){let i=document.createElement("input");i.type="file";i.accept=".json";i.onchange=e=>{let f=new FileReader();f.onload=e=>{try{let j=JSON.parse(e.target.result);saveData(j);renderList();alert("导入成功")}catch{alert("文件格式错误")}};f.readAsText(e.target.files[0])};i.click()}
 
-// 导入备份
-function importData(){
-  let input = document.createElement("input");
-  input.type="file";
-  input.accept=".json";
-  input.onchange=e=>{
-    let file=e.target.files[0];
-    let reader=new FileReader();
-    reader.onload=ev=>{
-      try{
-        let j=JSON.parse(ev.target.result);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(j));
-        alert("导入成功！");
-        renderList();
-      }catch(e){
-        alert("文件格式错误");
-      }
-    };
-    reader.readAsText(file);
-  };
-  input.click();
-}
+function updateTime(){let t=new Date();document.getElementById("time").innerText=`北京时间：${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")} ${String(t.getHours()).padStart(2,"0")}:${String(t.getMinutes()).padStart(2,"0")}:${String(t.getSeconds()).padStart(2,"0")}`}
+setInterval(updateTime,1000);
 
-// ===================== 底部功能 =====================
-// 实时北京时间
-function updateTime() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  const seconds = String(now.getSeconds()).padStart(2, '0');
-  const timeStr = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-  document.getElementById("time").innerText = `北京时间：${timeStr}`;
-}
-setInterval(updateTime, 1000);
-
-// 初始化
 renderList();
-updateTime();
 </script>
 </body>
 </html>
