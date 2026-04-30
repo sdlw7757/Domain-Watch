@@ -208,7 +208,7 @@ function renderList(){
     let warn = parseInt(item.warnDays || 180);
     let isWarn = left <= warn;
     let cls = isWarn ? "warn" : "";
-    let tag = isWarn ? `<span class="tag tag-red">需提醒</span>` : `<span class="tag tag-green">正常</span>`;
+    let tag = isWarn ? `<span class="tag tag-red">请续订</span>` : `<span class="tag tag-green">正常</span>`;
 
     let moveButtons = `
       <div class="action-buttons">
