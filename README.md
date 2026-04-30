@@ -1,6 +1,7 @@
 # DomainWatch — 域名到期提醒续订智能监控系统
 
-<img width="1225" height="389" alt="DomainWatch" src="https://github.com/user-attachments/assets/8f3f49f1-18d6-48e0-b1fb-4c3faf2e011c" />
+<img width="1185" height="468" alt="捕获" src="https://github.com/user-attachments/assets/bf6dc416-118b-406f-ad96-c8875b0ae438" />
+
 🔧专为域名打造的**本地可视化管理 + 云端自动提醒**工具，支持独立提醒天数、手动录入到期时间、每日自动检测。
 
 ## ✨ 核心功能
