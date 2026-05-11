@@ -10,7 +10,7 @@ def send_email(subject, content):
     sender = os.environ.get("MAIL_SENDER")
     password = os.environ.get("MAIL_PASS")
     receiver = os.environ.get("MAIL_RECEIVER")
-    smtp_server = os.environ.get("SMTP_SERVER", "smtp.qq.com")
+    smtp_server = os.environ.get("SMTP_SERVER", "smtp.139.com")
     smtp_port = int(os.environ.get("SMTP_PORT", 465))
 
     if not all([sender, password, receiver]):
