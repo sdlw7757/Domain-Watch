@@ -33,15 +33,15 @@ def send_email(subject, content):
 # 计算剩余天数
 def get_days_left(expire_str):
     # 处理永久域名（空字符串或"永久"）
-    如果 not expire_str 或 expire_str.strip() == "":
+    if not expire_str or expire_str.strip() == "":
         return 999999  # 返回一个很大的数字表示永久
     
-    try:
+    尝试:
         now = datetime.datetime.now()
-        expire = datetime.datetime.strptime(expire_str, "%Y-%m-%d")
+        expire = datetime.datetime.strptime(expire_str, '%Y-%m-%d')
         now = now.replace(hour=0, minute=0, second=0, microsecond=0)
         expire = expire.replace(hour=0, minute=0, second=0, microsecond=0)
-        return (expire - now).days
+        返回 (过期时间 - 现在).days
     except Exception as e:
         print(f"[WARN] 日期解析错误: {expire_str} - {e}")
         return 999999  # 解析错误也当做永久处理
@@ -85,7 +85,7 @@ def main():
             print(f"域名: {domain:20} 剩余: {left:3}天 提醒: <={warn_days}天")
             
             if 0 <= left <= warn_days:
-                warn_list.append((domain, expire, left))
+        msg["To"] = receiver
 
     if warn_list:
         msg = ["[WARNING] 域名到期提醒\n"]
