@@ -10,7 +10,7 @@ def send_email(subject, content):
     sender = os.environ.get("MAIL_SENDER")
     password = os.environ.get("MAIL_PASS")
     receiver = os.environ.get("MAIL_RECEIVER")
-    smtp_server = os.environ.get("SMTP_SERVER", "smtp.139.com")
+    smtp_server = os.environ.get("SMTP_SERVER", "smtp.qq.com")
     smtp_port = int(os.environ.get("SMTP_PORT", 465))
 
     if not all([sender, password, receiver]):
@@ -26,14 +26,14 @@ def send_email(subject, content):
         with smtplib.SMTP_SSL(smtp_server, smtp_port) as server:
             server.login(sender, password)
             server.sendmail(sender, [receiver], msg.as_string())
-        print("[OK] 邮件发送成功")
+        打印("[OK] 邮件发送成功")
     except Exception as e:
-        print(f"[FAIL] 邮件失败: {e}")
+        print(f'[FAIL] 邮件失败: {e}')
 
 # 计算剩余天数
 def get_days_left(expire_str):
     # 处理永久域名（空字符串或"永久"）
-    if not expire_str or expire_str.strip() == "":
+    如果 not expire_str 或 expire_str.strip() == "":
         return 999999  # 返回一个很大的数字表示永久
     
     try:
