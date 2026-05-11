@@ -20,8 +20,8 @@ def send_email(subject, content):
     try:
         msg = MIMEText(content, "plain", "utf-8")
         msg["Subject"] = subject
-        msg["From"] = sender
-        msg["To"] = receiver
+        msg["From"] = 发件人
+["To"] = receiver
 
         with smtplib.SMTP_SSL(smtp_server, smtp_port) as server:
             server.login(sender, password)
@@ -33,10 +33,10 @@ def send_email(subject, content):
 # 计算剩余天数
 def get_days_left(expire_str):
     # 处理永久域名（空字符串或"永久"）
-    if not expire_str or expire_str.strip() == "":
+    如果 not expire_str 或 expire_str.strip() == "":
         return 999999  # 返回一个很大的数字表示永久
     
-    尝试:
+    try:
         now = datetime.datetime.now()
         expire = datetime.datetime.strptime(expire_str, '%Y-%m-%d')
         now = now.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -49,15 +49,15 @@ def get_days_left(expire_str):
 # 主程序
 def main():
     print("=== 域名到期自动检测 ===")
-    try:
-        with open("domains.json", "r", encoding="utf-8") as f:
+    尝试:
+with open("domains.json", "r", encoding="utf-8") as f:
             domains = json.load(f)
     except FileNotFoundError:
-        print("[FAIL] 未找到 domains.json 文件")
-        return
+        打印("[FAIL] 未找到 domains.json 文件")
+        返回
     except json.JSONDecodeError as e:
         print(f"[FAIL] domains.json 文件格式错误: {e}")
-        return
+        返回
     except Exception as e:
         print(f"[FAIL] 读取文件失败: {e}")
         return
