@@ -20,44 +20,43 @@ def send_email(subject, content):
     try:
         msg = MIMEText(content, "plain", "utf-8")
         msg["Subject"] = subject
-        msg["From"] = 发件人
-["To"] = receiver
+        msg["From"] = sender
+        msg["To"] = receiver
 
         with smtplib.SMTP_SSL(smtp_server, smtp_port) as server:
             server.login(sender, password)
             server.sendmail(sender, [receiver], msg.as_string())
-        打印("[OK] 邮件发送成功")
+        print("[OK] 邮件发送成功")
     except Exception as e:
-        print(f'[FAIL] 邮件失败: {e}')
+        print(f"[FAIL] 邮件失败: {e}")
 
 # 计算剩余天数
 def get_days_left(expire_str):
-    # 处理永久域名（空字符串或"永久"）
-    如果 not expire_str 或 expire_str.strip() == "":
-        return 999999  # 返回一个很大的数字表示永久
+    if not expire_str or expire_str.strip() == "":
+        return 999999
     
     try:
         now = datetime.datetime.now()
-        expire = datetime.datetime.strptime(expire_str, '%Y-%m-%d')
+        expire = datetime.datetime.strptime(expire_str, "%Y-%m-%d")
         now = now.replace(hour=0, minute=0, second=0, microsecond=0)
         expire = expire.replace(hour=0, minute=0, second=0, microsecond=0)
-        返回 (过期时间 - 现在).days
+        return (expire - now).days
     except Exception as e:
         print(f"[WARN] 日期解析错误: {expire_str} - {e}")
-        return 999999  # 解析错误也当做永久处理
+        return 999999
 
 # 主程序
 def main():
     print("=== 域名到期自动检测 ===")
-    尝试:
-with open("domains.json", "r", encoding="utf-8") as f:
+    try:
+        with open("domains.json", "r", encoding="utf-8") as f:
             domains = json.load(f)
     except FileNotFoundError:
-        打印("[FAIL] 未找到 domains.json 文件")
-        返回
+        print("[FAIL] 未找到 domains.json 文件")
+        return
     except json.JSONDecodeError as e:
-        print(f"[FAIL] domains.json 文件格式错误: {e}")
-        返回
+        print(f"[FAIL] domains.json 格式错误: {e}")
+        return
     except Exception as e:
         print(f"[FAIL] 读取文件失败: {e}")
         return
@@ -70,7 +69,6 @@ with open("domains.json", "r", encoding="utf-8") as f:
         expire = item.get("expire", "")
         warn_days_str = item.get("warnDays", "180")
         
-        # 解析提醒天数
         try:
             warn_days = int(warn_days_str)
         except (ValueError, TypeError):
@@ -85,7 +83,7 @@ with open("domains.json", "r", encoding="utf-8") as f:
             print(f"域名: {domain:20} 剩余: {left:3}天 提醒: <={warn_days}天")
             
             if 0 <= left <= warn_days:
-        msg["To"] = receiver
+                warn_list.append((domain, expire, left))
 
     if warn_list:
         msg = ["[WARNING] 域名到期提醒\n"]
