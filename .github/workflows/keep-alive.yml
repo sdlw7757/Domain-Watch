@@ -1,15 +1,29 @@
 name: Keep Alive
+
+# 触发规则
 on:
+  # UTC每月30日16点 = 北京时间次月1日 00:00
   schedule:
-    - cron: '0 0 1 * *' # 每月1号自动运行
+    - cron: '0 16 30 * *'
+  # 支持网页手动一键运行，方便测试
+  workflow_dispatch:
+
 jobs:
-  keepalive:
+  keep_alive_task:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Empty commit to keep repo active
+      # 拉取仓库代码
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 配置git提交身份
+      - name: Set Git user info
         run: |
-          git config --global user.name "GitHub Bot"
-          git config --global user.email "bot@github.com"
-          git commit --allow-empty -m "Auto keepalive commit"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      # 生成空提交并推送，维持仓库活跃
+      - name: Create empty commit
+        run: |
+          git commit --allow-empty -m "Auto monthly keepalive commit"
           git push
